@@ -1,0 +1,57 @@
+.586
+.MODEL
+flat, stdcall
+OPTION CASEMAP:NONE
+Include kernel32.inc34
+Include masm32.inc
+IncludeLib kernel32.lib
+IncludeLib masm32.lib
+.CONST
+MsgExit
+DB
+13,10,"Press Enter to Exit",0AH,0DH,0
+.DATA
+B SWORD -6
+D SWORD 11
+X SWORD ?
+fX SWORD 0
+Zapros DB 13,10,'Input A',13,10,0
+Result DB 'Result='
+ResStr DB 16 DUP (' '),0
+; старшее слово результата
+.DATA?
+A SWORD ?
+fA SWORD ?
+Buffer DB 10 DUP (?)
+inbuf DB 100 DUP (?)
+; старшее слово переменной A
+.CODE
+Start:
+Invoke StdOut,ADDR Zapros
+Invoke StdIn,ADDR Buffer,LengthOf Buffer
+Invoke StripLF,ADDR Buffer
+; Преобразование в SDWORD
+Invoke atol,ADDR Buffer ;результат в EAX35
+mov
+DWORD PTR A,EAX
+; Вычисления
+mov CX,D
+add CX,8; CX:=D+8
+mov BX,B
+dec BX mov AX,A
+add AX,D; AX:=A+D
+imul BX ; DX:AX:=(A+D)*(B-1)
+idiv CX ; AX:=(DX:AX):CX
+mov X,AX
+; BX:=B-1
+; Преобразование
+Invoke dwtoa,X,ADDR ResStr
+; Вывод
+Invoke StdOut,ADDR Result
+XOR
+EAX,EAX
+Invoke StdOut,ADDR MsgExit
+Invoke StdIn,ADDR inbuf,LengthOf inbuf
+Invoke ExitProcess,0
+End
+Start

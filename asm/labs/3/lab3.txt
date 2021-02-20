@@ -1,0 +1,83 @@
+; Template for console application
+         .586
+         .MODEL  flat, stdcall
+         OPTION CASEMAP:NONE
+
+Include kernel32.inc
+Include masm32.inc
+
+IncludeLib kernel32.lib
+IncludeLib masm32.lib
+
+         .CONST
+MsgExit  DB    0AH,0DH,"Press Enter to Exit",0AH,0DH,0
+
+         .DATA
+ZaprosQ DB 13,10,'Input Q',13,10,0
+ZaprosA DB 13,10,'Input A',13,10,0
+ZaprosD DB 13,10,'Input D',13,10,0
+Result DB 'Result='
+ResStr DB 16 DUP (' '),0
+         .DATA?
+inbuf    DB    100 DUP (?)
+Q DWORD ?
+A DWORD ?
+D DWORD ?
+F DWORD ?
+Buffer DB 10 DUP (?)
+
+         .CODE
+Start:
+
+    Invoke StdOut, ADDR ZaprosQ
+    Invoke StdIn, ADDR Buffer,LengthOf Buffer
+    Invoke StripLF,ADDR Buffer
+    Invoke atol,ADDR Buffer 
+    mov DWORD PTR Q,EAX
+    
+    Invoke StdOut, ADDR ZaprosA
+    Invoke StdIn, ADDR Buffer,LengthOf Buffer
+    Invoke StripLF,ADDR Buffer
+    Invoke atol,ADDR Buffer 
+    mov DWORD PTR A,EAX
+    
+    
+    Invoke StdOut, ADDR ZaprosD
+Invoke StdIn, ADDR Buffer,LengthOf Buffer
+    Invoke StripLF,ADDR Buffer
+    Invoke atol,ADDR Buffer 
+    mov DWORD PTR D,EAX
+    
+    cmp Q, DWORD ptr 5
+    jg line1
+    mov eax, A
+    imul eax, eax
+    mov ebx, Q
+    xor edx, edx
+    idiv ebx
+    mov F, eax
+    jmp eql
+line1:
+    mov eax, Q
+    imul eax, eax
+    mov ecx, 3
+    xor edx, edx
+    idiv ecx
+    mov ebx, A
+    mov edx, D
+    imul bx, dx
+    sub eax, ebx
+    mov F, eax
+eql:
+     
+
+Invoke dwtoa,F,ADDR ResStr
+Invoke StdOut,ADDR Result
+
+         XOR    EAX,EAX
+         Invoke StdOut,ADDR MsgExit
+         Invoke StdIn,ADDR inbuf,LengthOf inbuf		
+	
+         Invoke ExitProcess,0
+         End    Start
+
