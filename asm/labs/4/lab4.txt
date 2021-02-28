@@ -1,0 +1,138 @@
+; Template for console application
+         .586
+         .MODEL  flat, stdcall
+         OPTION CASEMAP:NONE
+
+Include kernel32.inc
+Include masm32.inc
+
+IncludeLib kernel32.lib
+IncludeLib masm32.lib
+
+         .CONST
+MsgExit  DB    "Press Enter to Exit",0AH,0DH,0
+MsgInput db    "Input 24 value for array 4 * 6", 0ah, 0dh, 0
+endline  db    0ah, 0dh, 0
+space    db    " ", 0
+
+         .DATA
+;array    dd 4 dup (2)
+;         dd 4 dup (-2)
+;         dd 4 dup (5)
+;         dd 4 dup (23)
+;         dd 4 dup (-15)
+;         dd 4 dup (39)
+w        dw 4
+h        dw 6
+         .DATA?
+array    dd    24 dup(?)
+inbuf    DB    100 DUP (?)
+output   db    100 dup (?)
+buffer   db    100 dup (?)
+bword    db    20 dup(?)
+         .CODE
+Start:
+         
+         ; input array         
+         Invoke StdOut, ADDR MsgInput
+         mov    EBX, 0
+         
+cin:
+         cmp ebx, 24
+         je cend
+         Invoke StdIn,   ADDR buffer, LengthOf buffer 
+         Invoke StripLF, ADDR buffer                         
+         Invoke atol,    ADDR buffer                      
+         cmp eax, 0h
+         je cin       
+         MOV    array[EBX*4], EAX                         
+         inc    EBX
+         cmp ebx, 24
+         je cend
+            
+nextint:     
+         Invoke atol,    edx
+         cmp eax, 0h
+         je cin                        
+         MOV    array[EBX*4], EAX                         
+         inc    EBX
+         cmp ebx, 24
+         je cend
+         jmp nextint
+cend:
+         
+         
+         xor ecx, ecx
+         mov cx, h
+         xor ebx, ebx
+         lea edi, array
+         lea esi, array
+for_i:
+         push ecx
+         mov cx, w
+         xor eax, eax
+         xor ebx, ebx
+for_j: 
+         add eax, [edi + ebx * 4]
+         inc ebx
+         loop for_j
+         
+         cmp eax, 0; check the sum
+         jl nenorm
+         xor ebx, ebx
+         mov cx, w
+for_offset:
+         mov eax, [edi + ebx * 4]
+         mov [esi + ebx * 4], eax
+         inc ebx
+         loop for_offset
+         xor eax, eax
+         xor ebx, ebx
+         mov ax, w
+         mov bx, 4
+         mul bx
+         add esi, eax
+         jmp norm
+nenorm:
+         mov ax, h
+         dec ax
+         mov h, ax
+norm:
+         xor eax, eax
+         xor ebx, ebx
+         mov ax, w
+         mov bx, 4
+         mul bx
+         add edi, eax
+         pop ecx
+         loop for_i
+         
+         
+         ;print
+         xor ecx, ecx
+         mov cx, h
+         xor ebx, ebx
+         XOR    EAX,EAX
+         lea edi, array
+for_i_print:
+         push ecx
+         mov cx, w
+for_j_print:
+         push ecx
+         Invoke dwtoa, [edi + ebx * 4], ADDR output
+         inc ebx
+         Invoke StdOut,ADDR output
+         Invoke StdOut,ADDR space
+         pop ecx
+         loop for_j_print
+         Invoke StdOut,ADDR endline
+         pop ecx
+         loop for_i_print
+         
+         XOR    EAX,EAX
+         Invoke StdOut,ADDR MsgExit
+         Invoke StdIn,ADDR inbuf,LengthOf inbuf		
+	
+         Invoke ExitProcess,0
+         End    Start
+

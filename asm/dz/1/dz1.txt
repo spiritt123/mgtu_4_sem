@@ -1,0 +1,74 @@
+; Template for console application
+         .586
+         .MODEL  flat, stdcall
+         OPTION CASEMAP:NONE
+
+Include kernel32.inc
+Include masm32.inc
+
+IncludeLib kernel32.lib
+IncludeLib masm32.lib
+
+         .CONST
+MsgExit  DB    "Press Enter to Exit",0AH,0DH,0
+         .DATA
+ZaprosSTR DB 13,10,'Input str (18 chars)',13,10,0
+endline   db 10, 13
+         .DATA?
+buffer   db    6 dup (?)
+string   db    18 dup (?)
+inbuf    DB    100 DUP (?)
+
+         .CODE
+Start:
+
+         Invoke StdOut, ADDR ZaprosSTR
+         Invoke StdIn, ADDR string,LengthOf string
+         mov ecx, 3 
+         lea edi, string
+         lea esi, buffer
+string_loop:
+         push ecx
+
+         ;circle offeset on n in ax
+         mov eax, 4; offset
+         sub eax, ecx
+         mov ecx, 6
+         mov ebx, 0; i
+save_in_buffer:
+         add eax, ebx
+         cmp eax, 6
+         jl sof
+         sub eax, 6
+sof:
+         mov edx, [edi + eax]
+         mov byte ptr [esi + ebx], dl
+         sub eax, ebx
+         inc ebx 
+         loop save_in_buffer
+         ; write buffer to string
+         mov ecx, 6
+         xor eax, eax
+save_buffer_in_string:
+         mov edx, [esi + eax]
+         mov byte ptr [edi + eax], dl
+         inc eax
+         loop save_buffer_in_string
+;for string
+         pop ecx
+         add edi, 6
+         loop string_loop
+
+
+         XOR    EAX,EAX
+         Invoke StdOut,ADDR string
+         Invoke StdOut,ADDR endline
+         Invoke StdIn,ADDR inbuf,LengthOf inbuf
+         
+         XOR    EAX,EAX
+         Invoke StdOut,ADDR MsgExit
+         Invoke StdIn,ADDR inbuf,LengthOf inbuf		
+	
+         Invoke ExitProcess,0
+         End    Start
+
