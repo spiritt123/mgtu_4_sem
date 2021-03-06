@@ -1,0 +1,52 @@
+
+
+
+<head>
+  <title>Breddit</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    header{
+      padding: 18px;
+      margin-bottom: 50px;
+      color: white;
+      background-color: #0405509c;
+      min-height: 30px;
+      font-size: 24px;
+    }
+    p {
+      font-size: 24px;
+      background: rgba(255, 255, 255, 0.3);
+      text-align: left;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+
+
+<header>
+    Logged in as <%= current_user.name %>
+    <%= link_to "Log Out", logout_path %>
+</header>
+
+<div>
+  <% User.all.each do |user| %>
+    <tr>
+      <td>Name: <%= user.name %></td>
+      <td>Surname: <%= user.surname%></td>
+      <td>Patronymic: <%= user.patronymic %></td>
+      <td>Rights: <%= user.rights %></td>
+      <td>Id user<%= user.iduser %></td>
+    </tr>
+  <% end %>
+
+</div>
+
+
