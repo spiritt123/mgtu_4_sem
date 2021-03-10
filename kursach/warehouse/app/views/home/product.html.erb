@@ -60,15 +60,14 @@
 </header>
 
 <div id="user-tables">
-  <%= button_to("add_new_user", new_user_url, :method => :get ) %>
   <table>
-    <% User.all.each do |user| %>
+    <% Product.all.each do |product| %>
       <tr>
-        <td>Name: <%= user.name %></td>
-        <td>Surname: <%= user.surname%></td>
-        <td>Patronymic: <%= user.patronymic %></td>
-        <td>Rights: <%= user.rights %></td>
-        <td>Id user<%= user.iduser %></td>
+        <td>Title: <%= product.title%></td>
+        <td>Barcode: <%= product.barcode%></td>
+        <td>Massa: <%= product.massa%></td>
+        <td>Production date: <%= product.production%></td>
+        <td>Expiration date: <%= product.expiration%></td>
       </tr>
     <% end %>
   </table>

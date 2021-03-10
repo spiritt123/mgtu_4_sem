@@ -59,19 +59,29 @@
   </p>
 </header>
 
-<div id="user-tables">
-  <%= button_to("add_new_user", new_user_url, :method => :get ) %>
+<div id="country-tables">
   <table>
-    <% User.all.each do |user| %>
+    <% BarCodeCountry.all.each do |country| %>
       <tr>
-        <td>Name: <%= user.name %></td>
-        <td>Surname: <%= user.surname%></td>
-        <td>Patronymic: <%= user.patronymic %></td>
-        <td>Rights: <%= user.rights %></td>
-        <td>Id user<%= user.iduser %></td>
+        <td>Code: <%= country.code_c %></td>
+        <td>Title: <%= country.title%></td>
       </tr>
     <% end %>
   </table>
+  <table>
+    <% BarCodeCompany.all.each do |company| %>
+      <tr>
+        <td>Code: <%= company.code_co %></td>
+        <td>Title: <%= company.title%></td>
+      </tr>
+    <% end %>
+  <table>
+    <% BarCodeProduct.all.each do |product| %>
+      <tr>
+        <td>Code: <%= product.code_p %></td>
+        <td>Title: <%= product.title%></td>
+      </tr>
+    <% end %>
 </div>
 
 

@@ -10,6 +10,6 @@ class CreateUsers < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
-    #add_index :iduser, unique: true
+    add_index :iduser, unique: true
   end
 end
